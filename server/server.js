@@ -17,6 +17,10 @@ app.use(express.json());
 
 app.use("/api", apiRoutes);
 
+app.get("/", (req, res) => {
+  res.send(test);
+});
+
 // Handle WebSocket connections
 websocketController.initWebSocket(server);
 

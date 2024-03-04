@@ -4,4 +4,6 @@ const getWeather = require("../controllers/weatherController");
 
 router.post("/weather", getWeather);
 
+
+
 module.exports = router;
