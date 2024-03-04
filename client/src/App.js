@@ -40,10 +40,13 @@ const App = () => {
     setLoading(true);
     const { latitude, longitude } = userLocation;
     try {
-      const response = await axios.post("http://localhost:5000/api/weather", {
-        latitude,
-        longitude,
-      });
+      const response = await axios.post(
+        "https://weather-app-v2t7.vercel.app/api/weather",
+        {
+          latitude,
+          longitude,
+        }
+      );
       setWeather({
         location: response.data.location,
         temperature: response.data.temperature,
