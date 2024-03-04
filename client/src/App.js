@@ -10,6 +10,8 @@ const App = () => {
     longitude: "",
   });
   const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getUserLocation();
@@ -24,30 +26,38 @@ const App = () => {
         },
         (error) => {
           console.error("Error getting user location:", error);
+          setError("Failed to get user location. Please enter manually.");
         }
       );
     } else {
       console.error("Geolocation is not supported by this browser.");
+      setError("Geolocation is not supported by this browser.");
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const { latitude, longitude } = userLocation;
-    axios
-      .post("http://localhost:5000/api/weather", { latitude, longitude })
-      .then(function (response) {
-        setWeather({
-          location: response.data.location,
-          temperature: response.data.temperature,
-          icon: response.data.conditions.icon,
-          text: response.data.conditions.text,
-        });
-      })
-      .catch(function (error) {
-        console.error("Error fetching weather data:", error);
-        handleError(error);
+    try {
+      const response = await axios.post("http://localhost:5000/api/weather", {
+        latitude,
+        longitude,
       });
+      setWeather({
+        location: response.data.location,
+        temperature: response.data.temperature,
+        icon: response.data.conditions.icon,
+        text: response.data.conditions.text,
+      });
+      setLoading(false);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching weather data:", error);
+      handleError(error);
+      setLoading(false);
+      setError("Failed to fetch weather data. Please try again.");
+    }
   };
 
   return (
@@ -81,10 +91,14 @@ const App = () => {
         <button
           type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          disabled={loading}
         >
-          Get Weather
+          {loading ? "Fetching..." : "Get Weather"}
         </button>
       </form>
+
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+
       {weather && (
         <WeatherDisplay
           location={weather.location}
