@@ -4,7 +4,7 @@
   "description": "weather app for canverro",
   "main": "server.js",
   "scripts": {
-    "start": "cd client && npm start",
+    "start": "node server.js",
     "start-server": "node server.js"
   },
   "repository": {
